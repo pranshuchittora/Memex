@@ -4,7 +4,9 @@ import 'src/activity-logger/background'
 import 'src/search/background'
 import 'src/analytics/background'
 import 'src/imports/background'
-import DirectLinkingBackground from 'src/direct-linking/background'
+import DirectLinkingBackground from './direct-linking/background'
+import * as backup from './backup/background'
+
 import EventLogBackground from 'src/analytics/internal/background'
 import 'src/omnibar'
 import { INSTALL_TIME_KEY } from './constants'
@@ -155,3 +157,13 @@ window.directLinking = directLinking
 const eventLog = new EventLogBackground({ storageManager })
 eventLog.setupRemoteFunctions()
 window.eventLog = eventLog
+
+const backupModule = new backup.BackupBackgroundModule({
+    storageManager,
+    backend: new backup.SimpleHttpBackend({ url: 'http://localhost:8000' }),
+    lastBackupStorage: new backup.LocalLastBackupStorage({ key: 'lastBackup' }),
+})
+backupModule.startRecordingChangesIfNeeded()
+window.backup = backupModule
+
+window.storageManager = storageManager

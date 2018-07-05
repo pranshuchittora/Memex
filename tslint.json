@@ -1,20 +1,34 @@
 {
-    "extends": ["tslint-react", "tslint-config-prettier"],
+    "extends": [
+        "tslint-react",
+        "tslint-config-prettier"
+    ],
     "jsRules": {
         "no-empty": true
     },
     "rules": {
         "class-name": true,
-        "comment-format": [true, "check-space"],
-        "forin": true,
-        "interface-name": [true, "never-prefix"],
+        "comment-format": [
+            true,
+            "check-space"
+        ],
+        "forin": false,
+        "interface-name": [
+            true,
+            "never-prefix"
+        ],
         "jsdoc-format": true,
         "jsx-no-multiline-js": false,
         "jsx-boolean-value": false,
         "jsx-no-lambda": false,
         "label-position": true,
         "no-arg": true,
-        "no-console": [true, "debug", "info", "trace"],
+        "no-console": [
+            true,
+            "debug",
+            "info",
+            "trace"
+        ],
         "no-construct": true,
         "no-debugger": true,
         "no-duplicate-variable": true,
@@ -33,8 +47,14 @@
         ],
         "radix": true,
         "switch-default": true,
-        "triple-equals": [true, "allow-null-check"],
-        "typedef": [true, "property-declaration"],
+        "triple-equals": [
+            true,
+            "allow-null-check"
+        ],
+        "typedef": [
+            true,
+            "property-declaration"
+        ],
         "variable-name": [
             true,
             "ban-keywords",
