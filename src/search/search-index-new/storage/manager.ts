@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events'
 import { extractTerms } from '../../search-index-old/pipeline'
 import Storage from '../storage'
 import StorageRegistry from './registry'
@@ -11,7 +12,7 @@ import {
     FindOpts,
 } from './types'
 
-export class StorageManager implements ManageableStorage {
+export class StorageManager extends EventEmitter implements ManageableStorage {
     static DEF_SUGGEST_LIMIT = 10
     static DEF_FIND_OPTS: Partial<FindOpts> = {
         reverse: false,
@@ -68,6 +69,8 @@ export class StorageManager implements ManageableStorage {
     }
 
     constructor() {
+        super()
+
         this._initializationPromise = new Promise(
             resolve => (this._initializationResolve = resolve),
         )
@@ -85,7 +88,7 @@ export class StorageManager implements ManageableStorage {
         let coll = await this._storage
             .collection<T>(collectionName)
             .find(filter)
-        
+
 
         if (findOpts.reverse) {
             coll = coll.reverse()
@@ -147,6 +150,18 @@ export class StorageManager implements ManageableStorage {
 
         const coll = await this._find<T>(collectionName, filter, findOpts)
         return coll.toArray()
+    }
+
+    async findByPk(collectionName: string, pk: string) {
+        return await this._storage[collectionName].get(pk)
+    }
+
+    async* streamCollection(collectionName: string) {
+        const table = this._storage[collectionName]
+        const pks = await table.primaryKeys()
+        for (const pk of pks) {
+            yield await { pk, object: table.get(pk) }
+        }
     }
 
     /**
@@ -236,6 +251,42 @@ export class StorageManager implements ManageableStorage {
 
     _finishInitialization(storage) {
         this._storage = storage
+        this._setupChangeEvent()
         this._initializationResolve()
+    }
+
+    _setupChangeEvent() {
+        if (this.listenerCount('changing') === 0) {
+            return
+        }
+
+        for (const collectionName in this.registry.collections) {
+            if (this.registry.collections[collectionName].watch === false) {
+                continue
+            }
+
+            const table = this._storage[collectionName]
+            table.hook('creating', (pk, obj, transaction) => {
+                this.emit('changing', {
+                    operation: 'create',
+                    collection: collectionName,
+                    pk,
+                })
+            })
+            table.hook('updating', (mods, pk, obj, transaction) => {
+                this.emit('changing', {
+                    operation: 'update',
+                    collection: collectionName,
+                    pk,
+                })
+            })
+            table.hook('deleting', (pk, obj, transaction) => {
+                this.emit('changing', {
+                    operation: 'delete',
+                    collection: collectionName,
+                    pk,
+                })
+            })
+        }
     }
 }
