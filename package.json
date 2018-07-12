@@ -91,6 +91,7 @@
         "redux-observable": "^0.14.1",
         "redux-query-sync": "^0.1.7",
         "redux-thunk": "^2.2.0",
+        "remotestoragejs": "^1.0.3",
         "remove-stopwords": "^1.0.3",
         "reselect": "^3.0.1",
         "response-to-data-url": "^0.1.0",
