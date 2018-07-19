@@ -14,6 +14,7 @@ export interface Props {
     IDBKeyRange: typeof IDBKeyRange
     dbName: string
     storageManager?: StorageManager
+    backupTableName?: string
 }
 
 export default class Storage extends Dexie {
@@ -23,6 +24,8 @@ export default class Storage extends Dexie {
         dbName: 'memex',
         storageManager: null,
     }
+
+    public static DEF_BACKUP_TABLE = 'backupChanges'
     public static MIN_STR = ''
     public static MAX_STR = String.fromCharCode(65535)
 
@@ -38,6 +41,8 @@ export default class Storage extends Dexie {
         ): Promise<{ modifiedCount: number }>
         remove(query: FilterQuery<T>): Promise<{ deletedCount: number }>
     }
+
+    public backupTable: string
 
     /**
      * Represents page data - our main data type.
@@ -65,12 +70,20 @@ export default class Storage extends Dexie {
     public favIcons: Dexie.Table<FavIcon, string>
 
     constructor(
-        { indexedDB, IDBKeyRange, dbName, storageManager } = Storage.DEF_PARAMS,
+        {
+            indexedDB,
+            IDBKeyRange,
+            dbName,
+            storageManager,
+            backupTableName,
+        } = Storage.DEF_PARAMS,
     ) {
         super(dbName || Storage.DEF_PARAMS.dbName, {
             indexedDB: indexedDB || window.indexedDB,
             IDBKeyRange: IDBKeyRange || window['IDBKeyRange'],
         })
+
+        this.backupTable = backupTableName || Storage.DEF_BACKUP_TABLE
 
         this._initSchema(
             storageManager && getDexieHistory(storageManager.registry),
@@ -123,4 +136,23 @@ export default class Storage extends Dexie {
             await table.clear()
         }
     }
+
+    /**
+     * Overrides `Dexie._createTransaction` to ensure to add `backupChanges` table to any readwrite transaction.
+     * This allows us to avoid specifying this table on every single transaction to allow table hooks to write to
+     * our change tracking table.
+     *
+     * TODO: Add clause to condition to check if backups is enabled
+     *  (no reason to add this table to all transactions if backups is off)
+     */
+    private _createTransaction = Dexie.override(
+        this._createTransaction,
+        origFn => (mode: string, tables: string[], ...args) => {
+            if (mode === 'readwrite' && !tables.includes(this.backupTable)) {
+                tables = [...tables, this.backupTable]
+            }
+
+            return origFn.call(this, mode, tables, ...args)
+        },
+    )
 }
