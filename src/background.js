@@ -6,6 +6,7 @@ import 'src/analytics/background'
 import 'src/imports/background'
 import DirectLinkingBackground from './direct-linking/background'
 import * as backup from './backup/background'
+import * as driveBackup from './backup/background/backend/google-drive'
 
 import EventLogBackground from 'src/analytics/internal/background'
 import 'src/omnibar'
@@ -160,11 +161,12 @@ window.eventLog = eventLog
 
 const backupModule = new backup.BackupBackgroundModule({
     storageManager,
-    backend: new backup.RemoteStorageBackend({
-        apiKeys: {
-            googledrive:
-                '455172385517-dctnft2hrh4iqpbjqn7rbmn94ge2p3n4.apps.googleusercontent.com',
-        },
+    backend: new driveBackup.DriveBackupBackend({
+        tokenStore: new driveBackup.LocalStorageDriveTokenStore({
+            prefix: 'drive-token-',
+        }),
+        clientId:
+            '455172385517-dctnft2hrh4iqpbjqn7rbmn94ge2p3n4.apps.googleusercontent.com',
     }),
     lastBackupStorage: new backup.LocalLastBackupStorage({ key: 'lastBackup' }),
 })
