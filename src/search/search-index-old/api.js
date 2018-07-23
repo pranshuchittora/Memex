@@ -1,6 +1,4 @@
-import { fetchPagesByUrlPattern } from 'src/pouchdb'
 import index from './index'
-import mapResultsToPouchDocs from './map-search-to-pouch'
 import QueryBuilder from '../query-builder'
 import { generatePageDocId } from 'src/page-storage'
 import { addTimestampConcurrent } from './add'
@@ -45,7 +43,7 @@ export async function searchOld({
     skip = 0,
     limit = 10,
     showOnlyBookmarks = false,
-    mapResultsFunc = mapResultsToPouchDocs,
+    mapResultsFunc = f => f,
 }) {
     query = query.trim() // Don't count whitespace searches
 
@@ -135,14 +133,11 @@ export async function delPagesByDomain(url) {
 }
 
 export async function delPagesByPattern(regex) {
-    const pageRows = await fetchPagesByUrlPattern(regex)
-    const pageIds = pageRows.map(({ id }) => id)
-    return await delPagesConcurrent(pageIds)
+    return Promise.resolve()
 }
 
 export async function getMatchingPageCount(regex) {
-    const pageRows = await fetchPagesByUrlPattern(regex)
-    return pageRows.length
+    return Promise.resolve(0)
 }
 
 export {

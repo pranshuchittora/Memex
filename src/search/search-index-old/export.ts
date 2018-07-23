@@ -1,6 +1,5 @@
 import whenAllSettled from 'when-all-settled'
 
-import db from '../../pouchdb'
 import { decode } from '../../util/encode-url-for-id'
 import { ExportedPage, ExportedPageVisit, OldIndexPage } from '../migration'
 import { removeKeyType, initLookupByKeys } from './util'
@@ -20,13 +19,11 @@ const DEF_PARAMS: ExportParams = {
     endKey: 'page/\uffff',
 }
 
-async function* exportPages(
-    {
-        chunkSize = DEF_PARAMS.chunkSize,
-        startKey = DEF_PARAMS.startKey,
-        endKey = DEF_PARAMS.endKey,
-    }: Partial<ExportParams> = DEF_PARAMS,
-) {
+async function* exportPages({
+    chunkSize = DEF_PARAMS.chunkSize,
+    startKey = DEF_PARAMS.startKey,
+    endKey = DEF_PARAMS.endKey,
+}: Partial<ExportParams> = DEF_PARAMS) {
     let lastKey = startKey
     let batch: Map<string, OldIndexPage>
 
@@ -103,24 +100,7 @@ function extractAttachments(pouchDoc): Partial<PageAttachments> {
 }
 
 async function fetchPouchData(pageKey: string): Promise<Partial<ExportedPage>> {
-    const pouchDoc: PageDoc = await db.get(pageKey, { attachments: true })
-    const content = pouchDoc.content || {}
-    const attachments = extractAttachments(pouchDoc)
-
-    const { hostname, domain } = transformUrl(pouchDoc.url)
-
-    return {
-        fullUrl: pouchDoc.url,
-        fullTitle: content.title || pouchDoc.title,
-        text: content.fullText,
-        lang: content.lang,
-        canonicalUrl: content.canonicalUrl,
-        description: content.description,
-        keywords: content.keywords,
-        hostname,
-        domain,
-        ...attachments,
-    }
+    throw new Error('No pouch')
 }
 
 async function fetchVisitsData(visits: string[]): Promise<ExportedPageVisit[]> {
@@ -137,9 +117,9 @@ async function fetchVisitsData(visits: string[]): Promise<ExportedPageVisit[]> {
     }))
 }
 
-async function processKey(
-    [pageKey, indexDoc]: [string, OldIndexPage],
-): Promise<Partial<ExportedPage>> {
+async function processKey([pageKey, indexDoc]: [string, OldIndexPage]): Promise<
+    Partial<ExportedPage>
+> {
     // Decode the URL inside the old ID to get the new index ID
     const url = decode(removeKeyType(indexDoc.id))
 

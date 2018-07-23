@@ -26,8 +26,6 @@ export interface PipelineRes {
     text: string
 }
 
-export default function pipeline(props: PipelineReq): PipelineRes
-
 export interface URLParts {
     domain: string
     hostname: string
@@ -35,3 +33,5 @@ export interface URLParts {
 }
 
 export function transformUrl(url: string): URLParts
+export function extractTerms(text: string): Set<string>
+export default function pipeline(props: PipelineReq): PipelineRes

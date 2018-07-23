@@ -2,10 +2,8 @@ import { dataURLToBlob } from 'blob-util'
 
 import fetchPageData from 'src/page-analysis/background/fetch-page-data'
 import { addPageConcurrent } from '../add'
-import db from 'src/pouchdb'
 import { transformToBookmarkDoc } from 'src/imports'
 import { generatePageDocId } from 'src/page-storage'
-import storePage from 'src/page-storage/store-page'
 import { bookmarkKeyPrefix } from '../../bookmarks'
 import { fetchExistingPage, makeIndexFnConcSafe } from '../util'
 import index from '../'
@@ -47,7 +45,6 @@ export async function handleBookmarkCreation(id, bookmarkInfo) {
 
         const bookmarkDoc = transformToBookmarkDoc(pageDoc)(bookmarkInfo)
         addPageConcurrent({ pageDoc, bookmarkDocs: [bookmarkDoc] })
-        db.bulkDocs([bookmarkDoc, pageDoc])
     } catch (err) {
         console.error(
             'Error occurred while creating bookmark: ',
@@ -70,7 +67,7 @@ async function addBookmark({ url, timestamp = Date.now(), tabId }) {
         reverseIndexDoc = await fetchExistingPage(pageId)
     } catch (err) {
         // Non-existent, make new
-        reverseIndexDoc = await storePage({ tabId, url })
+        // reverseIndexDoc = await storePage({ tabId, url })
     }
 
     const bookmarkKey = `${bookmarkKeyPrefix}${timestamp}`

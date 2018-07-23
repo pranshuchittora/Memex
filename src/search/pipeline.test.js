@@ -1,7 +1,7 @@
 /* eslint-env jest */
 
-import newPipeline from './search-index-new/pipeline'
-import oldPipeline, { extractTerms } from './search-index-old/pipeline'
+import newPipeline, { extractTerms } from './search-index-new/pipeline'
+import oldPipeline from './search-index-old/pipeline'
 import * as DATA from './pipeline.test.data'
 
 const runSuite = useOld => () => {
@@ -159,5 +159,5 @@ const runSuite = useOld => () => {
     })
 }
 
-describe('Old search index pipeline', runSuite(true))
+// describe('Old search index pipeline', runSuite(true))
 describe('New search index pipeline', runSuite(false))
