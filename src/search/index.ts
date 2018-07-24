@@ -47,10 +47,6 @@ export class SearchIndex {
     suggest = this.bindIndexMethod('suggest')
     getMatchingPageCount = this.bindIndexMethod('getMatchingPageCount')
     domainHasFavIcon = this.bindIndexMethod('domainHasFavIcon')
-
-    queue = {
-        clear: () => this.backend.indexQueue.clear(),
-    }
 }
 
 const indexInterface = new SearchIndex()
