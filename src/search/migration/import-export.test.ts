@@ -2,11 +2,8 @@ import memdown from 'memdown'
 import indexedDB from 'fake-indexeddb'
 import IDBKeyRange from 'fake-indexeddb/lib/FDBKeyRange'
 import index from '../'
-import * as oldIndex from '../search-index-old'
 import * as newIndex from '../search-index-new'
-import exportOldPages from '../search-index-old/export'
 import importNewPage from '../search-index-new/import'
-import { searchOld } from '../search-index-old/api'
 import * as data from './import-export.test.data'
 import { MigrationManager } from './migration-manager'
 import { ExportedPage } from './types'
@@ -35,7 +32,6 @@ async function resetDataSources(dbName = 'test') {
     // Don't have any destroy methods available;
     //   => update pointer to memdown and manually delete fake-indexeddb's DB
     indexedDB.deleteDatabase(dbName)
-    oldIndex.init({ levelDown: memdown() })
     newIndex.init({ indexedDB, IDBKeyRange, dbName })
 }
 
@@ -44,14 +40,6 @@ describe('Old=>New index migration', () => {
         beforeAll(async () => {
             await resetDataSources()
             await insertTestPageIntoOldIndex()
-        })
-
-        test.skip('Exporting old-index data', async () => {
-            for await (const {
-                pages: [page],
-            } of exportOldPages()) {
-                expect(page).toEqual(data.EXPORTED_PAGE_1)
-            }
         })
     })
 
@@ -125,7 +113,7 @@ describe('Old=>New index migration', () => {
         test.skip('Simple full migration', async () => {
             // Set up to do same search, resolving to first result
             const doSearch = () => {
-                const run = index.useOld ? searchOld : index.search
+                const run = index.search
                 return run({
                     query: 'virus',
                     mapResultsFunc: results =>

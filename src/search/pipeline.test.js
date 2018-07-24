@@ -1,12 +1,11 @@
 /* eslint-env jest */
 
 import newPipeline, { extractTerms } from './search-index-new/pipeline'
-import oldPipeline from './search-index-old/pipeline'
 import * as DATA from './pipeline.test.data'
 
 const runSuite = useOld => () => {
     // New index pipeline has removed unused visit, bookmark inputs and removed all IDB key prefixing ('term/')
-    const pipeline = useOld ? oldPipeline : newPipeline
+    const pipeline = newPipeline
     const attachPrefix = useOld ? s => 'term/' + s : s => s
 
     function testExtractTerms({ input, output = DATA.EXPECTED_TERMS }) {

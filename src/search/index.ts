@@ -1,4 +1,3 @@
-import * as oldBackend from './search-index-old/api'
 import * as newBackend from './search-index-new'
 
 export class SearchIndex {
@@ -8,29 +7,12 @@ export class SearchIndex {
      */
     useOld: boolean
 
-    /**
-     * In the case where no explicit setting of index backend, it will
-     * do some async checks to see if there is old index data existing
-     * to decide. This Promise affords checking the status of that from outside.
-     */
-    dataReady: Promise<void>
-
     constructor(useOld?: boolean) {
-        if (useOld) {
-            this.dataReady = Promise.resolve()
-            this.useOld = useOld
-        } else {
-            this.dataReady = oldBackend
-                .hasData()
-                .catch(() => false)
-                .then(hasOldData => {
-                    this.useOld = hasOldData
-                })
-        }
+        this.useOld = false
     }
 
     private get backend(): typeof newBackend {
-        return this.useOld ? (oldBackend as any) : newBackend
+        return newBackend
     }
 
     private bindIndexMethod = (name: string) => (...args) =>

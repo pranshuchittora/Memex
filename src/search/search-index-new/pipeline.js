@@ -38,7 +38,7 @@ export function transformUrl(url) {
     let parsed, normalized
 
     try {
-        normalized = normalizeUrl(url)
+        normalized = normalizeUrl(url, { skipProtocolTrim: true })
     } catch (error) {
         normalized = url
     }
@@ -52,7 +52,7 @@ export function transformUrl(url) {
             domain: extractRootDomain(parsed.hostname),
         }
     } catch (error) {
-        console.error(`cannot parse URL: ${url}`)
+        console.error(`cannot parse URL: ${normalized}`)
         return {
             hostname: normalized,
             pathname: normalized,

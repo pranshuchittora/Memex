@@ -3,7 +3,6 @@ import indexedDB from 'fake-indexeddb'
 import IDBKeyRange from 'fake-indexeddb/lib/FDBKeyRange'
 
 import { SearchIndex } from './'
-import * as oldIndex from './search-index-old'
 import * as newIndex from './search-index-new'
 import * as DATA from './index.test.data'
 
@@ -33,7 +32,6 @@ const runSuite = useOld => () => {
         // Don't have any destroy methods available;
         //   => update pointer to memdown and manually delete fake-indexeddb's DB
         indexedDB.deleteDatabase(dbName)
-        oldIndex.init({ levelDown: memdown() })
         newIndex.init({ indexedDB, IDBKeyRange, dbName })
 
         await insertTestData()
