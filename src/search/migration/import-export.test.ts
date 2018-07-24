@@ -1,4 +1,3 @@
-import memdown from 'memdown'
 import indexedDB from 'fake-indexeddb'
 import IDBKeyRange from 'fake-indexeddb/lib/FDBKeyRange'
 import index from '../'
@@ -29,8 +28,6 @@ async function insertTestPageIntoOldIndex() {
 }
 
 async function resetDataSources(dbName = 'test') {
-    // Don't have any destroy methods available;
-    //   => update pointer to memdown and manually delete fake-indexeddb's DB
     indexedDB.deleteDatabase(dbName)
     newIndex.init({ indexedDB, IDBKeyRange, dbName })
 }
