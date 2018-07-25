@@ -1,5 +1,5 @@
 import db, { SearchParams, PageResultsMap } from '..'
-import QueryBuilder from '../../query-builder'
+import QueryBuilder from '../query-builder'
 import { groupLatestEventsByUrl, mapUrlsToLatestEvents } from './events'
 import { mapResultsToDisplay } from './map-results-to-display'
 import { findFilteredUrls } from './filters'
@@ -16,7 +16,7 @@ export async function search({
     domains = [],
     domainsExclude = [],
     tags = [],
-    ...restParams,
+    ...restParams
 }) {
     // Extract query terms via QueryBuilder (may change)
     const qb = new QueryBuilder()
@@ -87,7 +87,7 @@ export async function getMatchingPageCount(pattern) {
 async function fullSearch({
     terms = [],
     termsExclude = [],
-    ...params,
+    ...params
 }: SearchParams) {
     const filteredUrls = await findFilteredUrls(params)
 

@@ -1,12 +1,12 @@
 import db, { addPage, addTag, updateTimestampMeta, Page, FavIcon } from '.'
-import { ExportedPage } from '../migration'
+import { ExportedPage } from './migration'
 
 async function importPage({
     bookmark,
     visits,
     tags,
     favIconURI,
-    ...pageData,
+    ...pageData
 }: ExportedPage) {
     return db.transaction('rw', db.tables, async () => {
         const page = new Page(pageData)

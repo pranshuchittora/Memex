@@ -7,7 +7,7 @@ import { makeRemotelyCallable } from '../../util/webextensionRPC'
 const migrator = new MigrationManager({
     onComplete() {
         // Update global setting to force switch to using new index for all interface methods
-        searchIndex.useOld = false
+        // searchIndex.useOld = false
         analytics.trackEvent({ category: 'Migration', action: 'Completed' })
     },
 })
