@@ -1,6 +1,5 @@
-import { idleManager } from '../../util/idle'
 import { MigrationManager } from './migration-manager'
-import searchIndex from '../'
+// import searchIndex from '../'
 import analytics from '../../analytics'
 import { makeRemotelyCallable } from '../../util/webextensionRPC'
 

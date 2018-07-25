@@ -20,7 +20,6 @@ import {
     SEARCH_INJECTION_KEY,
 } from 'src/search-injection/constants'
 import db, { storageManager } from 'src/search'
-import 'src/search/migration'
 import initSentry from './util/raven'
 import { USER_ID, generateTokenIfNot } from 'src/util/generate-token'
 import { API_HOST } from 'src/analytics/internal/constants'

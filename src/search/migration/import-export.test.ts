@@ -1,7 +1,7 @@
 import indexedDB from 'fake-indexeddb'
 import IDBKeyRange from 'fake-indexeddb/lib/FDBKeyRange'
 import db, * as index from '../'
-import importNewPage from '../import'
+import importNewPage from './import'
 import * as data from './import-export.test.data'
 import { MigrationManager } from './migration-manager'
 import { ExportedPage } from './types'
