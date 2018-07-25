@@ -69,6 +69,7 @@ export interface CollectionDefinition {
     migrate?: MigrationRunner
     name?: string
     watch?: boolean // should we include this in the 'changing' event? defaults to true
+    backup?: boolean
 }
 
 export interface RegisterableStorage {
